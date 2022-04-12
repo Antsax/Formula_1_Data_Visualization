@@ -14,33 +14,42 @@ dataframes = get_dataframes_from_directory('data')
 # set up the dataframes
 constructors = dataframes['constructors']
 races = dataframes['races']
-constructors_standings = dataframes['constructors_standings']
+constructors_standings = dataframes['constructor_standings']
+
+# add date and constructor name to constructors standings
+constructors_standings = pd.merge(constructors_standings, races[['date', 'raceId']], on=['raceId'], how='left')
+constructors_standings = pd.merge(constructors_standings, constructors[['constructorId', 'name']], on=['constructorId'], how='left')
 
 # clean up the data
-df = races
+df = constructors_standings
 df['date'] = pd.to_datetime(df['date'])
-df = df.groupby(['date', 'raceId'], as_index = False)
 df = df.set_index('date')
-df = df.loc['2010-01-01':'2021-12-31']
-df = df.groupby([pd.Grouper(freq = 'M'), 'raceId'])
+df = df.loc['2010-01-01':'2022-12-31']
+df = df[['name', 'position']]
+df = df.groupby([pd.Grouper(freq="M"),'name'])['position'].mean().reset_index()
+# print(df)
 
+# layout
 app.layout = html.Div([
     html.H4('Constructors standings by year'),
     dcc.Graph(id="graph"),
     dcc.Checklist(
         id="checklist",
-        options=["Mercedes", "Ferrari", "Red Bull Racing", "McLaren", "Alpine", "Alfa Romeo", "Haas", "Alphatauri", "Williams", "Aston Martin"],
-        value=["Mercedes", "Ferrari", "Red Bull Racing", "McLaren", "Alpine"],
+        options=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine F1 Team", "Alfa Romeo", "Haas F1 Team", "AlphaTauri", "Williams", "Aston Martin"],
+        #options=[{'label': x, 'value': x} for x in df.sort_values('name')['name'].unique()],
+        value=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine"],
         inline=True
     ),
 ])
 
-
+# callback
 @app.callback(Output("graph", "figure"), Input("checklist", "value"))
 def update_line_chart(constructors):
-    df = dataframes['constructors_standings']
-    mask = df.constructorId.isin(constructors)
-    fig = px.line(df[mask], x="Year", y="Standing", color='Constructor')
+    mask = df['name'].isin(constructors)
+    fig = px.line(df[mask], x="date", y="position", color='name')
+    fig.update_layout(yaxis={'title': 'Constructor Standing',
+                             'autorange': 'reversed'},
+                      xaxis={'title': 'Year'})
     return fig
 
 app.run_server(debug=True)

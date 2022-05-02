@@ -1,8 +1,8 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 from dash import Dash, html, dcc, Input, Output
-from pathlib import Path
 
 from lib.dataframe_helper import get_dataframes_from_directory
 
@@ -15,6 +15,7 @@ dataframes = get_dataframes_from_directory('data')
 constructors = dataframes['constructors']
 races = dataframes['races']
 constructors_standings = dataframes['constructor_standings']
+circuits = dataframes['circuits']
 
 # add date and constructor name to constructors standings
 constructors_standings = pd.merge(constructors_standings, races[['date', 'raceId']], on=['raceId'], how='left')
@@ -26,8 +27,12 @@ df['date'] = pd.to_datetime(df['date'])
 df = df.set_index('date')
 df = df.loc['2010-01-01':'2022-12-31']
 df = df[['name', 'position']]
-df = df.groupby([pd.Grouper(freq="M"),'name'])['position'].mean().reset_index()
-# print(df)
+df = df.groupby([pd.Grouper(freq="M"), 'name'])['position'].mean().reset_index()
+
+# map configurations
+map = circuits
+map_fig = px.scatter_geo(map, lat="lat", lon="lng", hover_name="name",
+                         projection="natural earth", hover_data=["country"])
 
 # layout
 app.layout = html.Div([
@@ -40,9 +45,11 @@ app.layout = html.Div([
         value=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine"],
         inline=True
     ),
+    dcc.Graph(id="map",
+              figure=map_fig),
 ])
 
-# callback
+# callback for graph
 @app.callback(Output("graph", "figure"), Input("checklist", "value"))
 def update_line_chart(constructors):
     mask = df['name'].isin(constructors)

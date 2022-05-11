@@ -1,6 +1,8 @@
+from pydoc import classname
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import dash_extensions as de
 
 from dash import Dash, html, dcc, Input, Output
 
@@ -8,6 +10,8 @@ from lib.dataframe_helper import get_dataframes_from_directory
 
 # setting up dash and dataframes
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+lottie_url = "https://assets8.lottiefiles.com/packages/lf20_lfuo4vnm.json"
+lottie_options = dict(loop=False, renderSettings=dict(preserveAspectRatio='xMidYMid slice'))
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 dataframes = get_dataframes_from_directory('data')
 
@@ -36,17 +40,28 @@ map_fig = px.scatter_geo(map, lat="lat", lon="lng", hover_name="name",
 
 # layout
 app.layout = html.Div([
-    html.H4('Constructors standings by year'),
-    dcc.Graph(id="graph"),
-    dcc.Checklist(
-        id="checklist",
-        options=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine F1 Team", "Alfa Romeo", "Haas F1 Team", "AlphaTauri", "Williams", "Aston Martin"],
-        #options=[{'label': x, 'value': x} for x in df.sort_values('name')['name'].unique()],
-        value=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine"],
-        inline=True
+    html.Div(
+        className="navigation-bar",
+        children=[
+            de.Lottie(options=lottie_options, width="5%", height="5%", url=lottie_url),
+            html.H4('F1 DATA VISUALIZATION')]
     ),
-    dcc.Graph(id="map",
-              figure=map_fig),
+    html.Div(
+        className="constructors-graph",
+        children=[
+            dcc.Graph(id="graph"),
+            dcc.Checklist(
+                id="checklist",
+                options=[{'label': x, 'value': x} for x in df.sort_values('name')['name'].unique()],
+                value=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine"],
+                inline=True
+            )
+        ]
+    ),
+    html.Div(
+        className="map-graph",
+        children=[dcc.Graph(id="map", figure=map_fig)]
+    )
 ])
 
 # callback for graph
@@ -57,6 +72,8 @@ def update_line_chart(constructors):
     fig.update_layout(yaxis={'title': 'Constructor Standing',
                              'autorange': 'reversed'},
                       xaxis={'title': 'Year'})
+    for x in range(2011, 2023):
+        fig.add_vline(x=str(x), line_width=3, line_dash="dash", line_color="black")
     return fig
 
 app.run_server(debug=True)

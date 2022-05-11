@@ -1,0 +1,33 @@
+h1, h2, h3, h4, h5, p {
+  font-family: geneva;
+}
+p {
+  font-size: 0.8rem;
+}
+body {
+  margin: 0;
+  background-color: #7a7a7a;
+}
+.lottie {
+  float: left;
+}
+.navigation-bar {
+  overflow: hidden;
+  background-color: rgb(197, 67, 67);
+  font-weight: bold;
+  text-align: center;
+}
+.constructors-graph {
+  padding-top: 50px;
+  padding-left: 50px;
+  width: 1000px;
+  height: 400px;
+  float: left;
+}
+.map-graph {
+  padding-top: 50px;
+  padding-right: 50px;
+  width: 800px;
+  height: 400px;
+  float: right;
+}

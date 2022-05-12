@@ -43,25 +43,33 @@ app.layout = html.Div([
     html.Div(
         className="navigation-bar",
         children=[
-            de.Lottie(options=lottie_options, width="5%", height="5%", url=lottie_url),
-            html.H4('F1 DATA VISUALIZATION')]
-    ),
-    html.Div(
-        className="constructors-graph",
-        children=[
-            dcc.Graph(id="graph"),
-            dcc.Checklist(
-                id="checklist",
-                options=[{'label': x, 'value': x} for x in df.sort_values('name')['name'].unique()],
-                value=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine"],
-                inline=True
-            )
+            html.Img(className="logo", src=("https://www.formula1.com/etc/designs/fom-website/images/f1_logo.svg")),
+            html.H4(className="title", children=['F1 Data Visualization']),
+            html.Div(className="lottie", children=[de.Lottie(options=lottie_options, url=lottie_url)])
+            
         ]
     ),
     html.Div(
-        className="map-graph",
-        children=[dcc.Graph(id="map", figure=map_fig)]
+        className="graphs",
+        children=[
+            html.Div(
+                className="constructors-graph",
+                children=[
+                    dcc.Graph(id="graph"),
+                    dcc.Checklist(
+                        id="checklist",
+                        options=[{'label': x, 'value': x} for x in df.sort_values('name')['name'].unique()],
+                        value=["Mercedes", "Ferrari", "Red Bull", "McLaren", "Alpine"],
+                        inline=True
+                    )
+                ]
+            ),
+            html.Div(
+                className="map-graph",
+                children=[dcc.Graph(id="map", figure=map_fig)]
     )
+        ]
+    ),
 ])
 
 # callback for graph

@@ -44,11 +44,20 @@ app.layout = html.Div([
         className="navigation-bar",
         children=[
             html.Img(className="logo", src=("https://www.formula1.com/etc/designs/fom-website/images/f1_logo.svg")),
-            html.H4(className="title", children=['F1 Data Visualization']),
+            html.H2('F1 Data Visualization'),
             html.Div(className="lottie", children=[de.Lottie(options=lottie_options, url=lottie_url)])
             
         ]
     ),
+
+    html.Div(
+        className="info-box",
+        children=[
+            html.H4("Purpose of the application"),
+            html.P("The visualizatin aims to provide information about Formula 1, focusing on Contructors performance \n and Grand Prixs")
+        ]
+    ),
+
     html.Div(
         className="graphs",
         children=[

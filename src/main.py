@@ -38,6 +38,10 @@ map = circuits
 map_fig = px.scatter_geo(map, lat="lat", lon="lng", hover_name="name",
                          projection="natural earth", hover_data=["country"])
 
+ALLOWED_TYPES = (
+    "number"
+)
+
 # layout
 app.layout = html.Div([
     html.Div(
@@ -54,7 +58,33 @@ app.layout = html.Div([
         className="info-box",
         children=[
             html.H4("Purpose of the application"),
-            html.P("The visualizatin aims to provide information about Formula 1, focusing on Contructors performance \n and Grand Prixs")
+            html.P(["The visualization aims to provide information about Formula 1, focusing on Contructors' "
+                    "performance and Grand Prix races.",
+                    html.Br(),
+                    "In the application you can examine each Contructor's performance throughout "
+                    "the years and monitor where different Grand Prix races have been organized.",
+                    html.Br(),
+                    "You can specify the years to examine, which then limits the observed set.",
+                    html.Br(),
+                    "By specifying the Grand Prix, you will see relevant information for that particular circuit.",
+                    html.Br(),
+                    "The visualization aims to answer a question I have wanted to to examine for awhile:",
+                    html.Br(),
+                    "'how have teams fared in the standings throughout the years and which teams "
+                    "have performed the best in different Grand Prix races?'"
+                ])
+        ]
+    ),
+
+    html.Div(
+        className="selector-box",
+        children=[
+            html.P("Select years to examine: "),
+            dcc.Input(id='starting_year', type='number', min=1, max=2022, step=1, placeholder="From"),
+            html.P(children=" -- "),
+            dcc.Input(id='last_year', type='number', min=1, max=2022, step=1, placeholder="To"),
+            html.P("Select circuit to examine: "),
+            dcc.Dropdown(id = 'grand_prix', options = circuits.name, placeholder = "select a Grand Prix")
         ]
     ),
 

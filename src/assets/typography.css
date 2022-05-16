@@ -27,7 +27,6 @@ h4, p {
   padding-top: 0px;
 }
 
-
 h4:after {
   content: ' ';
   display: block;
@@ -111,4 +110,19 @@ div {
   border-style: solid;
   border-color: #e2e2e2;
   font-family: "f1_regular";
+}
+
+.selector-box p{
+  padding: 20px;
+  display: inline-block;
+}
+
+#last_year {
+  margin-right: 100px;
+}
+
+#grand_prix {
+  display: inline-block;
+  width: 450px;
+  height: 23px;
 }

@@ -117,12 +117,16 @@ div {
   display: inline-block;
 }
 
-#last_year {
-  margin-right: 100px;
-}
-
 #grand_prix {
   display: inline-block;
   width: 450px;
   height: 23px;
+}
+
+#last_year {
+  margin-right: 100px;
+}
+
+#checklist {
+  margin: 20px;
 }

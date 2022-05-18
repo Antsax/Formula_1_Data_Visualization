@@ -1,14 +1,11 @@
-import re
-
 from pydoc import classname
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import dash_extensions as de
 
-from dash import Dash, html, dcc, Input, Output, State
+from dash import Dash, html, dcc, Input, Output
 
-from lib.dataframe_helper import get_dataframes_from_directory
+from src.lib.dataframe_helper import get_dataframes_from_directory
 
 # setting up dash and dataframes
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']

@@ -261,4 +261,5 @@ def get_team(grand_prix):
     return team
      
 
-app.run_server()
+if __name__ == '__main__':
+    app.run_server()

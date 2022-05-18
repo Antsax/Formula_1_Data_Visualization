@@ -261,4 +261,4 @@ def get_team(grand_prix):
     return team
      
 
-app.run_server(debug=True)
+app.run_server()

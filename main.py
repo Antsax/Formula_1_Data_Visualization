@@ -94,7 +94,10 @@ app.layout = html.Div([
                     "The visualization aims to answer a question I have wanted to to examine for awhile:",
                     html.Br(),
                     "'how have teams fared in the standings throughout the years and which teams "
-                    "have performed the best in different Grand Prix races?'"
+                    "have performed the best in different Grand Prix races?'",
+                    html.Br(),
+                    html.Br(),
+                    html.B("NOTE: the application is extremely slow, so please do not take too ambitious leaps in examined timeframe")
                 ])
         ]
     ),

@@ -14,8 +14,10 @@ from lib.dataframe_helper import get_dataframes_from_directory
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 lottie_url = "https://assets8.lottiefiles.com/packages/lf20_lfuo4vnm.json"
 lottie_options = dict(loop=False, renderSettings=dict(preserveAspectRatio='xMidYMid slice'))
-app = Dash(__name__, external_stylesheets=external_stylesheets)
 dataframes = get_dataframes_from_directory('data')
+
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 # set up the dataframes
 constructors = dataframes['constructors']

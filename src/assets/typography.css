@@ -21,13 +21,38 @@ h5 {
   padding-top: 15px;
 }
 
-h4, p {
+h3, h4, h5, p {
   color: rgb(0, 0, 0);
   font-family: "f1_regular";
   padding-top: 0px;
 }
 
-h4:after {
+h3 {
+  margin: 20px;
+  display: block;
+}
+
+h5 {
+  padding-left: 200px;
+  padding-right: 200px;
+  padding-top: 10px;
+}
+
+h4:after{
+  content: ' ';
+  display: block;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+  margin-bottom: 5px;
+}
+
+h3:after {
+  margin-top: 40px;
   content: ' ';
   display: block;
   border: 1px solid #d0d0d0;
@@ -43,10 +68,6 @@ h4:after {
 body {
   margin: 0;
   background-color: #fff;
-}
-
-div {
-  display: block
 }
 
 .lottie {
@@ -102,7 +123,7 @@ div {
   border-radius: 10;
 }
 
-.info-box {
+.info-box{
   margin: 15px;
   padding: 10px;
   background-color: #F9F9F9;
@@ -110,6 +131,10 @@ div {
   border-style: solid;
   border-color: #e2e2e2;
   font-family: "f1_regular";
+}
+
+.best_performer {
+  text-align: center;
 }
 
 .selector-box p{
@@ -129,4 +154,20 @@ div {
 
 #checklist {
   margin: 20px;
+}
+
+#lap_div {
+  display: inline-block;
+}
+
+#year_div {
+  display: inline-block;
+}
+
+#team_div {
+  display: inline-block;
+}
+
+#driver_div {
+  display: inline-block;
 }

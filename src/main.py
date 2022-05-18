@@ -1,3 +1,5 @@
+import re
+
 from pydoc import classname
 import pandas as pd
 import plotly.express as px
@@ -18,6 +20,8 @@ dataframes = get_dataframes_from_directory('data')
 # set up the dataframes
 constructors = dataframes['constructors']
 races = dataframes['races']
+results = dataframes['results']
+drivers = dataframes['drivers']
 constructors_standings = dataframes['constructor_standings']
 circuits = dataframes['circuits']
 races['date'] = races['date'].str[:6] + races['year'].astype(str)
@@ -37,6 +41,30 @@ df = df.groupby([pd.Grouper(freq="M"), 'name'])['position'].mean().reset_index()
 # map configurations
 map_fig = px.scatter_geo(circuits, lat="lat", lon="lng", hover_name="name",
                          projection="natural earth", hover_data=["country"])
+
+# set up dataframe for getting relevant information
+results = results.drop(columns=['resultId', 'number', 'grid', 'position', 'positionText', 'positionOrder',
+                                'points', 'laps', 'time', 'milliseconds', 'fastestLap', 'rank', 'fastestLapSpeed', 'statusId'])
+results = pd.merge(results, drivers[['forename', 'surname', 'driverId']], on=['driverId'], how="left")
+results = pd.merge(results, races[['year', 'circuitId', 'raceId']], on=['raceId'], how="left")
+results = pd.merge(results, circuits[['name', 'circuitId']], on=['circuitId'], how="left")
+results = pd.merge(results, constructors[['constructorId', 'name']], on=['constructorId'], how='left')
+results = results[results['fastestLapTime'] != '\\N']
+results['fastestLapTime'] = pd.to_datetime(results['fastestLapTime'], format="%M:%S.%f").dt.time
+
+# create dataframe with best results
+best_df = pd.DataFrame()
+for circuitId in circuits['circuitId']:
+    examined_set = results.loc[results['circuitId'] == circuitId]
+    try:
+        fastest_time= min(examined_set['fastestLapTime'])
+        fastest_record = results.loc[results['fastestLapTime'] == fastest_time]
+        fastest_record = fastest_record.drop(columns=['raceId', 'driverId', 'constructorId', 'circuitId'])
+        best_df = pd.concat([best_df, fastest_record], ignore_index = True)
+    except ValueError:
+        circuit_name = circuits.loc[circuits['circuitId'] == circuitId, 'name'].item()
+        replace_set = pd.DataFrame({'fastestLapTime': ['NA'], 'forename': ['NA'], 'surname': ['NA'],  'year': ['NA'], 'name_x': [circuit_name], 'name_y': ['NA']})
+        best_df = pd.concat([best_df, replace_set], ignore_index = True)
 
 # layout
 app.layout = html.Div([
@@ -110,6 +138,52 @@ app.layout = html.Div([
             )
         ]
     ),
+
+    html.Div(
+        className="best_performer",
+        children=[
+            html.H3("Best performance in given circuit"),
+            html.Div(
+                id='lap_div',
+                children=[
+                    html.H5("Lap time"),
+                    html.P(
+                        id="lap_time"
+                    )
+                ]
+            ),
+
+            html.Div(
+                id='driver_div',
+                children=[
+                    html.H5("Driver"),
+                    html.P(
+                        id="driver"
+                    )
+                ]
+            ),
+
+            html.Div(
+                id='year_div',
+                children=[
+                    html.H5("Year"),
+                    html.P(
+                        id="year"
+                    )
+                ]
+            ),
+
+            html.Div(
+                id='team_div',
+                children=[
+                    html.H5("Constructor"),
+                    html.P(
+                        id="team"
+                    )
+                ]
+            ),
+        ]
+    )
 ])
 
 # callback for graph
@@ -151,6 +225,40 @@ def center_map(grand_prix):
     lon = circuits.loc[circuits['name'] == grand_prix, 'lng'].item()
     return px.scatter_geo(circuits, lat="lat", lon="lng", hover_name="name",
                           projection="natural earth", hover_data=["country"],
-                          center=dict(lat=lat, lon=lon))        
+                          center=dict(lat=lat, lon=lon))
+
+# callback for lap time
+@app.callback(Output("lap_time", "children"), Input("grand_prix", "value"))
+def get_lap_time(grand_prix):
+    lap_time = str(best_df.loc[best_df['name_x'] == grand_prix, 'fastestLapTime'].item())
+    if lap_time == 'NA':
+        return "NA"
+    return lap_time[3:12]
+
+# callback for driver
+@app.callback(Output("driver", "children"), Input("grand_prix", "value"))
+def get_driver(grand_prix):
+    first_name = str(best_df.loc[best_df['name_x'] == grand_prix, 'forename'].item())
+    last_name = str(best_df.loc[best_df['name_x'] == grand_prix, 'surname'].item())
+    if first_name == 'NA':
+        return "NA"
+    return f'{first_name} {last_name}'
+
+# callback for year
+@app.callback(Output("year", "children"), Input("grand_prix", "value"))
+def get_year(grand_prix):
+    year = str(best_df.loc[best_df['name_x'] == grand_prix, 'year'].item())
+    if year == 'NA':
+        return "NA"
+    return year
+
+# callback for constructor
+@app.callback(Output("team", "children"), Input("grand_prix", "value"))
+def get_team(grand_prix):
+    team = str(best_df.loc[best_df['name_x'] == grand_prix, 'name_y'].item())
+    if team == 'NA':
+        return "NA"
+    return team
+     
 
 app.run_server(debug=True)

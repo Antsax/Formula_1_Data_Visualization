@@ -204,7 +204,7 @@ def update_line_chart(checklist, starting_year, last_year):
     fig.update_layout(yaxis={'title': 'Constructor Standing',
                              'autorange': 'reversed'},
                       xaxis={'title': 'Year'})
-    for x in range(starting_year, last_year):
+    for x in range(starting_year, last_year+1):
         fig.add_vline(x=str(x), line_width=3, line_dash="dash", line_color="black")
     return fig
 
